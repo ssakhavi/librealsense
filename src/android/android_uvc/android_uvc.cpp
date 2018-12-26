@@ -1859,7 +1859,7 @@ UsbManager &usbHost = UsbManager::getInstance();
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_intel_realsense_libusbhost_RealsenseUsbHostManager_nativeAddUsbDevice(JNIEnv *env,
+Java_com_intel_realsense_android_RealsenseUsbHostManager_nativeAddUsbDevice(JNIEnv *env,
                                                                                jobject instance,
                                                                                jstring deviceName_,
                                                                                jint fileDescriptor) {
