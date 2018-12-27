@@ -1,4 +1,4 @@
-package com.intel.realsense.libusbhost;
+package com.intel.realsense.android;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     static {
-        System.loadLibrary("usbhost");
+        System.loadLibrary("android_librs_test");
     }
 
     final Handler mHandler = new Handler();
@@ -31,13 +31,14 @@ public class MainActivity extends AppCompatActivity {
     private ByteBuffer colorBuffer;
 
     private Button btnStart;
-    private static final int DEPTH_HEIGHT = 480;
-    private static final int DEPTH_WIDTH = 640;
+    private static final int DEPTH_HEIGHT = 720;
+    private static final int DEPTH_WIDTH = 1280;
     private ColorConverter mDepthConverter;
+    private ColorConverter mColorConverter;
+
     private RealsenseUsbHostManager mUsbHostManager;
     private boolean isStreaming = false;
     TextureView mTextureViewDepth;
-    private ColorConverter mColorConferter;
     TextureView mTextureViewColor;
 
 
@@ -51,11 +52,11 @@ public class MainActivity extends AppCompatActivity {
         colorBuffer = ByteBuffer.allocateDirect(DEPTH_HEIGHT * DEPTH_WIDTH * 4);
         colorBuffer.order(ByteOrder.nativeOrder());
         mDepthConverter = new ColorConverter(this, ConversionType.DEPTH, DEPTH_WIDTH, DEPTH_HEIGHT);
-        mColorConferter = new ColorConverter(this, ConversionType.RGBA, DEPTH_WIDTH, DEPTH_HEIGHT);
+        mColorConverter = new ColorConverter(this, ConversionType.RGBA, DEPTH_WIDTH, DEPTH_HEIGHT);
         mTextureViewDepth = findViewById(R.id.outputDepth);
         mTextureViewDepth.setSurfaceTextureListener(mDepthConverter);
         mTextureViewColor = findViewById(R.id.outputColor);
-        mTextureViewColor.setSurfaceTextureListener(mColorConferter);
+        mTextureViewColor.setSurfaceTextureListener(mColorConverter);
         btnStart = (Button) findViewById(R.id.btnStart);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         mDepthConverter.process(depthBuffer);
                         mTextureViewDepth.invalidate();
-                        mColorConferter.process(colorBuffer);
+                        mColorConverter.process(colorBuffer);
                         mTextureViewColor.invalidate();
                     }
                 });
